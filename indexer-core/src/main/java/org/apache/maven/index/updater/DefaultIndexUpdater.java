@@ -49,6 +49,7 @@ import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
 import org.apache.lucene.document.StringField;
 import org.apache.lucene.index.CorruptIndexException;
+import org.apache.lucene.index.DirectoryReader;
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.IndexableField;
@@ -272,7 +273,7 @@ public class DefaultIndexUpdater
         IndexWriter w = null;
         try
         {
-            r = IndexReader.open( directory );
+            r = DirectoryReader.open(directory);
             w = new NexusIndexWriter( directory, new NexusAnalyzer(), false );
             
             Bits liveDocs = MultiFields.getLiveDocs(r);
@@ -410,8 +411,8 @@ public class DefaultIndexUpdater
      * Unpack index data using specified Lucene Index writer
      * 
      * @param is an input stream to unpack index data from
-     * @param w a writer to save index data
-     * @param ics a collection of index creators for updating unpacked documents.
+     * @param d //w a writer to save index data
+     * @param context //ics a collection of index creators for updating unpacked documents.
      */
     public static Date unpackIndexData( final InputStream is, final Directory d, final IndexingContext context )
         throws IOException

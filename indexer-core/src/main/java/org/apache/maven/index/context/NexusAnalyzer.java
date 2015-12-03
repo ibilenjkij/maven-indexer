@@ -19,11 +19,11 @@ package org.apache.maven.index.context;
  * under the License.
  */
 
-import java.io.Reader;
+
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.Tokenizer;
 import org.apache.lucene.analysis.util.CharTokenizer;
-import org.apache.lucene.util.Version;
+import org.apache.lucene.util.AttributeFactory;
 import org.apache.maven.index.creator.JarFileContentsIndexCreator;
 
 /**
@@ -43,23 +43,24 @@ public final class NexusAnalyzer
         super(PER_FIELD_REUSE_STRATEGY);
     }
     
-    protected Tokenizer getTokenizer( String fieldName, Reader reader )
+    protected Tokenizer getTokenizer( String fieldName )
     {
         if ( JarFileContentsIndexCreator.FLD_CLASSNAMES_KW.getKey().equals( fieldName ) )
         {
             // To keep "backward" compatibility, we have to use old flawed tokenizer.
-            return new DeprecatedClassnamesTokenizer( reader );
+            return new DeprecatedClassnamesTokenizer( );
         }
         else
         {
-            return new LetterOrDigitTokenizer( reader );
+            return new LetterOrDigitTokenizer( );
         }
     }
 
     @Override
-    protected TokenStreamComponents createComponents(String fieldName, Reader reader)
+    protected TokenStreamComponents createComponents(String fieldName)
     {
-        return new TokenStreamComponents(getTokenizer(fieldName, reader));
+
+        return new TokenStreamComponents(getTokenizer(fieldName));
     }
 
     // ==
@@ -67,9 +68,9 @@ public final class NexusAnalyzer
     public static class NoopTokenizer
         extends CharTokenizer
     {
-        public NoopTokenizer( Reader in )
+        public NoopTokenizer( )
         {
-            super( Version.LUCENE_46, in );
+            super(AttributeFactory.DEFAULT_ATTRIBUTE_FACTORY );
         }
 
         @Override
@@ -83,9 +84,9 @@ public final class NexusAnalyzer
     public static class DeprecatedClassnamesTokenizer
         extends CharTokenizer
     {
-        public DeprecatedClassnamesTokenizer( Reader in )
+        public DeprecatedClassnamesTokenizer( )
         {
-            super( Version.LUCENE_46, in );
+            super(AttributeFactory.DEFAULT_ATTRIBUTE_FACTORY );
         }
         
         @Override
@@ -104,9 +105,9 @@ public final class NexusAnalyzer
     public static class LetterOrDigitTokenizer
         extends CharTokenizer
     {
-        public LetterOrDigitTokenizer( Reader in )
+        public LetterOrDigitTokenizer( )
         {
-            super( Version.LUCENE_46, in );
+            super(AttributeFactory.DEFAULT_ATTRIBUTE_FACTORY );
         }
 
         @Override

@@ -156,7 +156,7 @@ public class DefaultIndexingContext
         throws IOException, ExistingLuceneIndexMismatchException
     {
         this( id, repositoryId, repository, repositoryUrl, indexUpdateUrl, indexCreators,
-            FSDirectory.open( indexDirectoryFile ), reclaimIndex );
+            FSDirectory.open( indexDirectoryFile.toPath() ), reclaimIndex );
 
         setIndexDirectoryFile( indexDirectoryFile );
     }
@@ -171,7 +171,7 @@ public class DefaultIndexingContext
 
         if ( indexDirectory instanceof FSDirectory )
         {
-            setIndexDirectoryFile(( (FSDirectory) indexDirectory ).getDirectory() );
+            setIndexDirectoryFile(( (FSDirectory) indexDirectory ).getDirectory().toFile() );
         }
     }
 
@@ -213,10 +213,10 @@ public class DefaultIndexingContext
             try
             {
                 // unlock the dir forcibly
-                if ( IndexWriter.isLocked( indexDirectory ) )
+                /*if ( IndexWriter.isLocked( indexDirectory ) )
                 {
                     IndexWriter.unlock( indexDirectory );
-                }
+                } */
 
                 openAndWarmup();
 
@@ -249,11 +249,11 @@ public class DefaultIndexingContext
         {
             closeReaders();
 
-            // unlock the dir forcibly
+/*            // unlock the dir forcibly
             if ( IndexWriter.isLocked( indexDirectory ) )
             {
                 IndexWriter.unlock( indexDirectory );
-            }
+            }*/
 
             deleteIndexFiles( true );
         }
@@ -281,7 +281,7 @@ public class DefaultIndexingContext
         // check for descriptor if this is not a "virgin" index
         if ( getSize() > 0 )
         {
-            final TopScoreDocCollector collector = TopScoreDocCollector.create( 1, false );
+            final TopScoreDocCollector collector = TopScoreDocCollector.create( 1 );
             final IndexSearcher indexSearcher = acquireIndexSearcher();
             try
             {
@@ -369,12 +369,12 @@ public class DefaultIndexingContext
 
             if ( full )
             {
-                if ( indexDirectory.fileExists( INDEX_PACKER_PROPERTIES_FILE ) )
+                if ( IndexUtils.fileExists(indexDirectory, INDEX_PACKER_PROPERTIES_FILE) )
                 {
                     indexDirectory.deleteFile( INDEX_PACKER_PROPERTIES_FILE );
                 }
 
-                if ( indexDirectory.fileExists( INDEX_UPDATER_PROPERTIES_FILE ) )
+                if ( IndexUtils.fileExists(indexDirectory, INDEX_UPDATER_PROPERTIES_FILE ) )
                 {
                     indexDirectory.deleteFile( INDEX_UPDATER_PROPERTIES_FILE );
                 }
@@ -612,7 +612,7 @@ public class DefaultIndexingContext
         try
         {
             final IndexWriter w = getIndexWriter();
-            final IndexReader directoryReader = IndexReader.open( directory);
+            final IndexReader directoryReader = DirectoryReader.open( directory);
             TopScoreDocCollector collector = null;
             try
             {
@@ -635,7 +635,7 @@ public class DefaultIndexingContext
                     String uinfo = d.get( ArtifactInfo.UINFO );
                     if ( uinfo != null )
                     {
-                        collector = TopScoreDocCollector.create( 1, false );
+                        collector = TopScoreDocCollector.create( 1 );
                         s.search( new TermQuery( new Term( ArtifactInfo.UINFO, uinfo ) ), collector );
                         if ( collector.getTotalHits() == 0 )
                         {
@@ -784,7 +784,7 @@ public class DefaultIndexingContext
     protected Set<String> getGroups( String field, String filedValue, String listField )
         throws IOException, CorruptIndexException
     {
-        final TopScoreDocCollector collector = TopScoreDocCollector.create( 1, false );
+        final TopScoreDocCollector collector = TopScoreDocCollector.create( 1 );
         final IndexSearcher indexSearcher = acquireIndexSearcher();
         try
         {

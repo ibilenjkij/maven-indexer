@@ -23,6 +23,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.Arrays;
 import java.util.Date;
 
 import org.apache.lucene.document.Document;
@@ -52,7 +53,7 @@ public class IndexUtils
         
         for (String file : source.listAll())
         {
-            source.copy(target, file, file, IOContext.DEFAULT); 
+            source.copyFrom(target, file, file, IOContext.DEFAULT);
         }
 
         copyFile( source, target, IndexingContext.INDEX_UPDATER_PROPERTIES_FILE );
@@ -71,7 +72,7 @@ public class IndexUtils
     public static boolean copyFile( Directory source, Directory target, String srcName, String targetName )
         throws IOException
     {
-        if ( !source.fileExists( srcName ) )
+        if ( !fileExists( source, srcName ) )
         {
             return false;
         }
@@ -173,7 +174,7 @@ public class IndexUtils
     public static void deleteTimestamp( Directory directory )
         throws IOException
     {
-        if ( directory.fileExists( TIMESTAMP_FILE ) )
+        if ( fileExists( directory, TIMESTAMP_FILE ) )
         {
             directory.deleteFile( TIMESTAMP_FILE );
         }
@@ -195,8 +196,6 @@ public class IndexUtils
                 try
                 {
                     io.writeLong( timestamp.getTime() );
-
-                    io.flush();
                 }
                 finally
                 {
@@ -213,7 +212,7 @@ public class IndexUtils
             Date result = null;
             try
             {
-                if ( directory.fileExists( TIMESTAMP_FILE ) )
+                if ( fileExists( directory, TIMESTAMP_FILE ) )
                 {
                     IndexInput ii = null;
 
@@ -354,6 +353,10 @@ public class IndexUtils
         {
             // ignore
         }
+    }
+
+    public static boolean fileExists (Directory directory, String fileName) throws IOException {
+        return Arrays.asList(directory.listAll()).contains(fileName);
     }
 
 }

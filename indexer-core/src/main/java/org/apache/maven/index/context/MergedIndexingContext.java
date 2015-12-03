@@ -21,6 +21,7 @@ package org.apache.maven.index.context;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
@@ -79,9 +80,9 @@ public class MergedIndexingContext
                                   boolean searchable, ContextMemberProvider membersProvider )
         throws IOException
     {
-        this( membersProvider, id, repositoryId, repository, FSDirectory.open( indexDirectoryFile ), searchable );
+        this( membersProvider, id, repositoryId, repository, FSDirectory.open( indexDirectoryFile.toPath() ), searchable );
 
-        setIndexDirectoryFile( indexDirectoryFile );
+        setIndexDirectoryFile( indexDirectoryFile.toPath() );
     }
 
     @Deprecated
@@ -296,7 +297,7 @@ public class MergedIndexingContext
      * Sets index location. As usually index is persistent (is on disk), this will point to that value, but in
      * some circumstances (ie, using RAMDisk for index), this will point to an existing tmp directory.
      */
-    protected void setIndexDirectoryFile(File dir) throws IOException
+    protected void setIndexDirectoryFile(/*File*/Path dir) throws IOException
     {
         if ( dir == null )
         {
@@ -308,7 +309,7 @@ public class MergedIndexingContext
         }
         else
         {
-            this.directoryFile = dir;
+            this.directoryFile = dir.toFile();
         }
     }
 

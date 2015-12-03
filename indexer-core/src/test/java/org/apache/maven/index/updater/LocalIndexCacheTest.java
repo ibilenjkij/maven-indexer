@@ -80,8 +80,8 @@ public class LocalIndexCacheTest
         removeTempContext();
 
         tempContext =
-            indexer.addIndexingContext( repositoryId + "temp", repositoryId, repoDir, indexDir, repositoryUrl, null,
-                MIN_CREATORS );
+            indexer.createIndexingContext( repositoryId + "temp", repositoryId, repoDir, indexDir, repositoryUrl, null,
+                true, false, MIN_CREATORS );
 
         return tempContext;
     }
@@ -91,7 +91,7 @@ public class LocalIndexCacheTest
     {
         if ( tempContext != null )
         {
-            indexer.removeIndexingContext( tempContext, true );
+            indexer.closeIndexingContext( tempContext, true );
             tempContext = null;
             FileUtils.cleanDirectory( indexDir );
         }
@@ -101,7 +101,7 @@ public class LocalIndexCacheTest
         throws Exception
     {
         // create initial remote repo index
-        indexer.addArtifactToIndex( createArtifactContext( repositoryId, "commons-lang", "commons-lang", "2.2", null ),
+        indexer.addArtifactsToIndex( createArtifactContexts( repositoryId, "commons-lang", "commons-lang", "2.2", null ),
             context );
         packIndex( remoteRepo, context );
 
@@ -141,7 +141,7 @@ public class LocalIndexCacheTest
         assertGroupCount( 1, "commons-lang", testContext );
 
         // incremental remote update
-        indexer.addArtifactToIndex( createArtifactContext( repositoryId, "commons-lang", "commons-lang", "2.3", null ),
+        indexer.addArtifactsToIndex( createArtifactContexts( repositoryId, "commons-lang", "commons-lang", "2.3", null ),
             context );
         packIndex( remoteRepo, context );
 
@@ -189,7 +189,7 @@ public class LocalIndexCacheTest
     public void testForceIndexDownload()
         throws Exception
     {
-        indexer.addArtifactToIndex( createArtifactContext( repositoryId, "commons-lang", "commons-lang", "2.2", null ),
+        indexer.addArtifactsToIndex( createArtifactContexts( repositoryId, "commons-lang", "commons-lang", "2.2", null ),
             context );
         packIndex( remoteRepo, context );
 
@@ -218,7 +218,7 @@ public class LocalIndexCacheTest
     public void testInitialForcedFullDownload()
         throws Exception
     {
-        indexer.addArtifactToIndex( createArtifactContext( repositoryId, "commons-lang", "commons-lang", "2.2", null ),
+        indexer.addArtifactsToIndex( createArtifactContexts( repositoryId, "commons-lang", "commons-lang", "2.2", null ),
             context );
         packIndex( remoteRepo, context );
 
@@ -239,7 +239,7 @@ public class LocalIndexCacheTest
     public void testFailedIndexDownload()
         throws Exception
     {
-        indexer.addArtifactToIndex( createArtifactContext( repositoryId, "commons-lang", "commons-lang", "2.2", null ),
+        indexer.addArtifactsToIndex( createArtifactContexts( repositoryId, "commons-lang", "commons-lang", "2.2", null ),
             context );
         packIndex( remoteRepo, context );
 
@@ -285,7 +285,7 @@ public class LocalIndexCacheTest
     public void testCleanCacheDirectory()
         throws Exception
     {
-        indexer.addArtifactToIndex( createArtifactContext( repositoryId, "commons-lang", "commons-lang", "2.2", null ),
+        indexer.addArtifactsToIndex( createArtifactContexts( repositoryId, "commons-lang", "commons-lang", "2.2", null ),
             context );
         packIndex( remoteRepo, context );
 
@@ -300,7 +300,7 @@ public class LocalIndexCacheTest
         updater.fetchAndUpdateIndex( updateRequest );
 
         // new remote index delta
-        indexer.addArtifactToIndex( createArtifactContext( repositoryId, "commons-lang", "commons-lang", "2.3", null ),
+        indexer.addArtifactsToIndex( createArtifactContexts( repositoryId, "commons-lang", "commons-lang", "2.3", null ),
             context );
         packIndex( remoteRepo, context );
 
@@ -342,7 +342,7 @@ public class LocalIndexCacheTest
     public void testOffline()
         throws Exception
     {
-        indexer.addArtifactToIndex( createArtifactContext( repositoryId, "commons-lang", "commons-lang", "2.2", null ),
+        indexer.addArtifactsToIndex( createArtifactContexts( repositoryId, "commons-lang", "commons-lang", "2.2", null ),
             context );
         packIndex( remoteRepo, context );
 

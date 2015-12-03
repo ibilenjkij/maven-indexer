@@ -92,8 +92,8 @@ public class DownloadRemoteIndexerManagerTest
 
         // make context "fake central"
         centralContext =
-            indexer.addIndexingContext( "central", "central", fakeCentral, getDirectory( "central" ),
-                "http://localhost:" + port, null, MIN_CREATORS );
+            indexer.createIndexingContext( "central", "central", fakeCentral, getDirectory( "central" ),
+                "http://localhost:" + port, null, true, false, MIN_CREATORS );
     }
 
     @Override
